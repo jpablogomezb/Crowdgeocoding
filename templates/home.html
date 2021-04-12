@@ -16,6 +16,9 @@
 	.char{
 		padding: 100px 50px;
 	}
+	.char2{
+		padding: 0px 85px;
+	}
 	img {
 	  /*border: 1px solid #ddd;
 	  border-radius: 4px;*/
@@ -56,6 +59,16 @@
         </div>
         <div class="col-md-5">
         	<img src="{% static 'img/task_example.png' %}">
+        </div>
+     </div>
+     
+     <div class="row char2 text-center">
+        <div class="col-md-6">
+        	<br>
+        	<p>Crowd-Geocoding allows you to <b>create a crowdsourcing task by uploading a CSV file and generate a database with addresses or place names to validate.</b></p>
+        </div>
+        <div class="col-md-6">
+        	<p>Within a crowdsourcing task, the address selected by a volunteer (user) is geocoded by <b>Google Maps, Bing Maps, MapQuest and OpenStreetMap (OSM) online APIs</b>. The results of the geocoders are presented on a map for the user to explore and select the best result based on their knowledge of the geographic area. <b>The volunteer can also suggest a location.</b></p>
         </div>
      </div>
 {% endblock %}
