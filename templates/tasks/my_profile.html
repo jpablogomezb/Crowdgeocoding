@@ -1,0 +1,360 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% include "task_edit_form.html" %}
+{% include "task_view_form.html" %}
+{% include "task_create_form.html" %}
+{% include "task_delete_form.html" %}
+{% include "reward_edit_form.html" %}
+{% include "reward_view_form.html" %}
+{% include "reward_create_form.html" %}
+{% load crispy_forms_tags %}
+{% block head_title %} My Profile {{title_action}} {% endblock %}
+{% block head_style %}
+<style type="text/css">
+#UpDownData{
+    text-align: left;
+}
+</style>
+{% endblock %}
+{% block content %}
+<div class="bs-header" id="content">
+    <div class="container">   
+    <h1>{% trans "Hi" %} {{ user.first_name }}, {% trans "welcome back to Crowd-GeoCode!" %}</h1>
+    </div>
+</div>
+<br>
+{% if messages %}
+<div class="container">
+            
+                {% for message in messages %}
+                <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }} {% endif %}">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
+                {% endfor %}      
+</div>
+{% endif %}
+<div class='row'>
+    <div class="col-sm-10 col-sm-offset-1" >
+    <!-- tabs-->
+    <ul class="nav nav-tabs">
+          <li ><a href="#UserProfile" data-toggle="tab" aria-expanded="false"><h4><small>{% trans "User Profile" %}</h4></small></a></li>
+          <li class="active" ><a href="#Collaborator" data-toggle="tab" aria-expanded="false"><h4><small>{% trans "Task Collaborator Area" %}</h4></small></a></li>
+          <li ><a href="#Creator" data-toggle="tab" aria-expanded="true"><h4><small>{% trans "Task Creator Area" %}</h4></small></a></li>   
+    </ul>
+    <div class="tab-content">
+
+<!-- User Profile Panel -->
+        <div class="tab-pane fade" id="UserProfile">
+            <div class='col-sm-5 col-sm-offset-1'>
+            <br>
+            <table class="table table-condensed table-hover"cellspacing='0'> 
+                <h2><small>{% trans "User Details" %}</small></h2>
+                    <tr> 
+                        <td><h5>{% trans "Username:" %}</h5></td>
+                        <td>{{ my_user.username }}</td>
+                    </tr> 
+                    <tr>
+                        <td><h5>{% trans "First name:" %}</h5></td>
+                        <td>{{ my_user.first_name }}</td>
+                    </tr> 
+                    <tr> 
+                        <td><h5>{% trans "Last name:" %}</h5></td>
+                        <td>{{ my_user.last_name }}</td>
+                    </tr> 
+                    <tr> 
+                        <td><h5>{% trans "Email:" %}</h5></td>
+                        <td>{{ my_user.email }} </td>
+                    </tr> 
+             </table> 
+              <a href='{% url 'user-edit' %}' >{% trans "Update details" %}</a>
+         </div>
+           <div class='col-sm-5 col-sm-offset-1'>
+            <br>
+            <table class="table table-condensed table-hover"cellspacing='0'> 
+                <h2><small>{% trans "User Description" %}</small></h2>
+                    <tr> 
+                        <td><h5>{% trans "Description:" %}</h5></td>
+                        <td>{{ my_user_profile.description }}</td>
+                    </tr> 
+                    <tr>
+                        <td><h5>{% trans "My Postal Code:" %}</h5></td>
+                        <td>{{ my_user_profile.my_postal_code }}</td>
+                    </tr>
+             </table> 
+              <a href='{% url 'profile-edit' %}' >{% trans "Update profile" %}</a>
+         </div>
+        </div>
+
+<!-- Task Collaborator Panel -->
+        <div class="tab-pane fade active in" id="Collaborator">
+            <br>
+            <h2 style="text-align:center">{% trans "Task Collaborator Area" %}</h2>
+            <hr>
+            <div style='text-align:right'>
+                <h5><span><a href="{% url 'all_tasks' %}" class="btn btn-success btn-xs">{% trans "Search for Tasks!" %}</a> {% trans "or" %} </span>
+                <a href="{% url 'all_rewards' %}" class="btn btn-success btn-xs">{% trans "Chase for Task's Rewards!" %}</a></h5>
+            </div>
+            <h2><small>{% trans "My Tasks" %}</small></h2>
+
+            <table class="table table-bordered table-hover "cellspacing='0'> 
+                    <tr> 
+                        <th><small>{% trans "Task ID" %}</small></th> 
+                        <th><small>{% trans "Task Name" %}</small></th>  
+                        <th><small>{% trans "Task Status" %}</small></th>
+                        <th><small>{% trans "Actions" %}</small></th> 
+                    </tr> 
+                    {% for my_task in collaborating_tasks %} 
+                    <tr> 
+                        <td>{{ my_task.id }}</td>
+                        <td>{{ my_task.name }}</td>
+                        <td>{{ my_task.get_status_display }}</td>
+                        <td>
+                            <a id="viewMyTaskBtn{{ my_task.id }}" class="btn btn-default btn-md" title="View this task!"><i class="fa fa-info-circle fa-md"></i></a>
+                            {% if my_task.status == 'IP' %}
+                            <a id="startMyTaskBtn{{ my_task.id }}" class="btn btn-default btn-md" title="Start Crowd-Geocoding!"><i class="fa fa-map-marker fa-2x"></i></a>
+                            {% endif %}
+                        </td> 
+                    </tr> 
+                    {% endfor %} 
+            </table>
+
+            <h2><small> {% trans "My Rewards to Request" %}</small> <span style='float:right'> </span></h2>
+
+            <table class="table table-bordered table-hover"cellspacing='0'> 
+                    <tr> 
+                        <th><small>{% trans "Task ID" %}</small></th>
+                        <th><small>{% trans "Reward Name" %}</small></th> 
+                        <th><small>{% trans "Actions" %}</small></th> 
+                    </tr> 
+                    {% for reward in my_user_profile.my_rewards.all %}
+                    <tr> 
+                        <td>{{ reward.task.id }}</td>
+                        <td>{{ reward.name }} </td>
+                        <td> 
+                            <a id="viewMyRewardBtn{{ reward.id }}" class="btn btn-default btn-xs" title="View my reward!"><i class="fa fa-info-circle fa-lg"></i></a>
+                            <a id="reclaimMyRewardBtn{{ reward.pk }}" class="btn btn-default btn-xs" title="Reclaim your reward!"><i class="fa fa-envelope fa-lg"></i></a>
+                        </td> 
+                    </tr> 
+                        
+                    {% endfor %} 
+             </table>
+        </div>
+
+<!-- Task Creator Panel -->
+        <div class="tab-pane fade" id="Creator">
+            <br>
+            <h2 style="text-align:center">{% trans "Task Creator Area" %}</h2>
+            <hr>
+            <h2><small> {% trans "My Created Tasks List" %}</small>   <span style='float:right'><button id="newTaskBtn" class="btn btn-success btn-xs">{% trans "Create New Task" %}</button> </span> </h2>
+
+            <table class="table table-bordered table-hover "cellspacing='0'> 
+                    <tr> 
+                        <th><small>{% trans "Task ID" %}</small></th> 
+                        <th><small>{% trans "Task Name" %}</small></th>
+                        <th><small>{% trans "Task Status" %}</small></th>   
+                        <th>{% trans "Actions" %}</th> 
+                    </tr> 
+                    {% for task in created_tasks %} 
+                    <tr> 
+                        <td>{{ task.id }}</td>
+                        <td>{{ task.name }}</td> 
+                        <td>{{ task.get_status_display }}</td>
+                        <td>
+                            <a id="deleteMyCTaskBtn{{ task.id }}"  class="btn btn-default btn-xs"> <i class="fa fa-times-circle fa-lg" title="Delete this task!"></i></a>
+                            <a id="viewMyCTaskBtn{{ task.id }}"  class="btn btn-default btn-xs"> <i class="fa fa-info-circle fa-lg" title="View this task!"></i></a>
+                            <a id="editMyCTaskBtn{{ task.id }}"  class="btn btn-default btn-xs"> <i class="fa fa-pencil fa-lg" title="Edit this task!"></i></a>
+                        </td> 
+                    </tr> 
+                    {% endfor %} 
+            </table>
+            <div id="UpDownData">
+            <h5><span><a href="{% url 'upload-file' %}"  class="fa fa-upload" title="Upload task data!"> {% trans "Upload Data" %}</a> </span><!-- <span class="disabled" ><a href="#" class="fa fa-download" title="Download task data!"> Download Data</a> </span> --></h5>
+            </div>
+            
+            <h2><small> {% trans "Rewards for My Tasks" %}</small> <span style='float:right'><button id="newRewardBtn" class="btn btn-success btn-xs">{% trans "Create New Reward" %}</button> </span></h2>
+            <table class="table table-bordered table-hover"cellspacing='0'> 
+                    <tr> 
+                        <th><small>{% trans "Task ID" %}</small></th>
+                        <th><small>{% trans "Task reward active?" %}</small></th>
+                        <th><small>{% trans "Reward Name" %}</small></th> 
+                        <th><small>{% trans "Actions" %}</small></th> 
+                    </tr> 
+                    {% for reward in created_rewards %} 
+                    <tr> 
+                       
+                        <td>{{ reward.task.id }}</td>
+                        <td>{{ reward.task.reward_is_offered }} </td>
+                        <td>{{ reward.name }} </td>
+                        <td> 
+                            <a id="deleteMyCRewardBtn{{ reward.pk }}"  class="btn btn-default btn-xs"> <i class="fa fa-times-circle fa-lg" title="Delete this reward!"></i></a>
+                            <a id="viewMyCRewardBtn{{ reward.pk }}"  class="btn btn-default btn-xs"> <i class="fa fa-info-circle fa-lg" title="View this reward!"></i></a>
+                            <a id="editMyCRewardBtn{{ reward.pk }}"  class="btn btn-default btn-xs"> <i class="fa fa-pencil fa-lg" title="Edit this reward!"></i></a>
+                            
+                        </td> 
+                    </tr> 
+                    {% endfor %} 
+             </table> 
+             <h2><small> {% trans "Rewards to Deliver" %}</small> <span style='float:right'> </span></h2>
+            <table class="table table-bordered table-hover"cellspacing='0'> 
+                    <tr> 
+                        <th><small>{% trans "Reward Name" %}</small></th> 
+                        <th><small>{% trans "Collaborator Name" %}</small></th> 
+                        <th><small>{% trans "Collaborator Email" %}</small></th>
+                        <th><small>{% trans "Actions" %}</small></th> 
+                    </tr>  
+                     {% for u in users_w_rewards %}
+                    <tr> 
+                        {% for reward in u.my_rewards.all %}
+                        <td> {{reward.name}}</td>
+                        <td>{{ u.user.first_name }} {{ us.user.last_name }} (Username: {{u.user.username }})</td>
+                        <td>{{ u.user.email }}</td>
+                        <td> 
+
+                        <a id="contactRewardOwnerBtn{{ reward.pk }}" class="btn btn-default btn-xs" title="Contact the winner!"><i class="fa fa-envelope fa-lg"></i></a>
+                        </td> 
+                        {% endfor %}
+                      
+                    </tr> 
+                         
+                      {% endfor %} 
+             </table>
+        </div>
+    </div>
+</div>
+    <!-- /tabs -->
+    
+</div>
+
+<!-- Here starts the modal forms -->
+<div id="form-modal" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" >
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <br>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div id="form-modal-body" class="modal-body">
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+</div><!-- /.modal --> 
+
+{% endblock %}
+{% block jquery %}
+<script>
+
+     var formAjaxSubmit = function(form, modal) {
+                $(form).submit(function (e) {
+                    e.preventDefault();
+                    $.ajax({
+                        type: $(this).attr('method'),
+                        url: $(this).attr('action'),
+                        data: $(this).serialize(),
+                        success: function (xhr, ajaxOptions, thrownError) {
+                            if ( $(xhr).find('.has-error').length > 0 ) {
+                                $(modal).find('.modal-body').html(xhr);
+                                formAjaxSubmit(form, modal);
+                            } else {
+                                $(modal).modal('toggle');
+
+                            }
+                            window.location.reload();
+                        },
+                        error: function (xhr, ajaxOptions, thrownError) {
+                        }
+                    });
+                });
+            }
+            $('#newTaskBtn').click(function() {
+                $('#form-modal-body').load('/task-new/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+
+                });
+            });
+
+             
+            $('#newRewardBtn').click(function() {
+                $('#form-modal-body').load('/reward-new/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+
+
+            {% for task in created_tasks %} 
+            $('#viewMyCTaskBtn{{ task.id }}').click(function() {
+                $('#form-modal-body').load('/task-detail/{{ task.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+
+            $('#editMyCTaskBtn{{ task.id }}').click(function() {
+                $('#form-modal-body').load('/task-edit/{{ task.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+
+            $('#deleteMyCTaskBtn{{ task.id }}').click(function() {
+                $('#form-modal-body').load('/task-delete/{{ task.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+            {% endfor %} 
+
+            {% for reward in created_rewards %}
+            $('#viewMyCRewardBtn{{ reward.id }}').click(function() {
+                $('#form-modal-body').load('/reward-detail/{{ reward.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+
+            $('#editMyCRewardBtn{{ reward.id }}').click(function() {
+                $('#form-modal-body').load('/reward-edit/{{ reward.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+            $('#deleteMyCRewardBtn{{ reward.id }}').click(function() {
+                $('#form-modal-body').load('/reward-delete/{{ reward.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+            {% endfor %} 
+
+
+            {% for my_task in collaborating_tasks %} 
+            $('#viewMyTaskBtn{{ my_task.id }}').click(function() {
+                $('#form-modal-body').load('/task-detail/{{ my_task.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+
+            $('#startMyTaskBtn{{ my_task.id }}').click(function() {
+                window.location.href = '/map/task/{{ my_task.id }}/';
+            });
+
+            {% endfor %} 
+
+            {% for reward in my_user_profile.my_rewards.all %}
+                $('#viewMyRewardBtn{{ reward.id }}').click(function() {
+                $('#form-modal-body').load('/reward-detail/{{ reward.id }}/', function () {
+                    $('#form-modal').modal('toggle');
+                    formAjaxSubmit('#form-modal-body form', '#form-modal');
+                });
+            });
+
+
+            {% endfor %} 
+
+
+        </script>
+{% endblock %}

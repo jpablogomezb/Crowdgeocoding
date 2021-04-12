@@ -1,0 +1,345 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-07-30 12:47+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: templates/account/login.html:9 templates/account/login.html.py:17
+#: templates/account/login.html:48
+msgid "Sign In"
+msgstr "Iniciar sesión"
+
+#: templates/account/login.html:20
+#, python-format
+msgid ""
+"Please sign in with one\n"
+"        of your existing third party accounts. Or, <a href=\"%(signup_url)s"
+"\">sign up</a>\n"
+"        for a %(site_name)s account and sign in below:"
+msgstr ""
+
+#: templates/account/login.html:30 templates/tasks/my_profile.html:101
+msgid "or"
+msgstr "o"
+
+#: templates/account/login.html:37
+#, python-format
+msgid ""
+"Si no has creado una cuenta aún, por favor\n"
+"        <a href=\"%(signup_url)s\">regístrate</a> primero."
+msgstr ""
+
+#: templates/account/login.html:47
+msgid "Forgot Password?"
+msgstr "¿Olvidaste tu contraseña?"
+
+#: templates/account/logout.html:6 templates/account/logout.html.py:13
+#: templates/account/logout.html:22
+msgid "Sign Out"
+msgstr "Cerrar sesión"
+
+#: templates/account/logout.html:15
+msgid "Are you sure you want to sign out?"
+msgstr "¿Estás seguro de querer cerrar sesión?"
+
+#: templates/account/signup.html:8
+msgid "Signup"
+msgstr "Regístrate"
+
+#: templates/account/signup.html:16 templates/account/signup.html.py:26
+msgid "Sign Up"
+msgstr "Regístrate"
+
+#: templates/account/signup.html:18
+#, python-format
+msgid ""
+"Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
+msgstr ""
+
+#: templates/app.html:366 templates/app.html.py:400 templates/app.html:435
+#: templates/app.html.py:469
+msgid "Coordinates:"
+msgstr "Coordenadas:"
+
+#: templates/app.html:366 templates/app.html.py:400 templates/app.html:435
+#: templates/app.html.py:469
+msgid "Accuracy:"
+msgstr "Exactitud:"
+
+#: templates/app.html:366 templates/app.html.py:400 templates/app.html:435
+#: templates/app.html.py:469
+msgid "Quality:"
+msgstr "Calidad:"
+
+#: templates/app.html:376 templates/app.html.py:384 templates/app.html:389
+#: templates/app.html.py:410 templates/app.html:418 templates/app.html.py:423
+#: templates/app.html:445 templates/app.html.py:453 templates/app.html:458
+#: templates/app.html.py:478 templates/app.html:486 templates/app.html.py:491
+msgid "Confidence: "
+msgstr "Confianza:"
+
+#: templates/app.html:674
+msgid ""
+" Good job!</strong> Thanks, your answer was saved correctly. You could make "
+"other locations! "
+msgstr ""
+" ¡Bien hecho!</strong> Gracias, tu respuesta ha sido guardada "
+"correctamente. !Podrías hacer otras localizaciones! "
+
+#: templates/app.html:688
+msgid "1. My locations to geocode:"
+msgstr "1. Mis localizaciones a geocodificar:"
+
+#: templates/app.html:698
+msgid "2. Select an address from the list to start"
+msgstr "2. Selecciona una dirección de la lista"
+
+#: templates/app.html:703
+msgid "Selected adress:"
+msgstr "Dirección seleccionada"
+
+#: templates/app.html:711
+msgid "Start Crowd-Geocoding"
+msgstr "Empezar a Crowd-Geocodificar"
+
+#: templates/app.html:722
+msgid "3a. Explore results on the map:"
+msgstr "3a. Explora los resultados en el mapa:"
+
+#: templates/app.html:735
+msgid "4. Save the Crowd-Geocoding Task"
+msgstr "4. Guarda la tarea de Crowd-Geocoding"
+
+#: templates/app.html:740
+msgid "Latitude:"
+msgstr "Latitud:"
+
+#: templates/app.html:741
+msgid "Longitude:"
+msgstr "Longitud:"
+
+#: templates/app.html:748
+msgid "Save coordinates for this address"
+msgstr "Guardar las coordenadas para esta dirección"
+
+#: templates/app.html:762
+msgid "3b. Select the best location output:"
+msgstr "3b. Selecciona el resultado con la mejor ubicación:"
+
+#: templates/app.html:769
+msgid "What do you think is the best result?"
+msgstr "¿Cúal crees que es el mejor resultado?"
+
+#: templates/app.html:851
+msgid "None of them convince you?"
+msgstr "¿Ningúno te convence?"
+
+#: templates/app.html:857
+msgid "Suggest location"
+msgstr "Sugiere una ubicación"
+
+#: templates/app.html:861
+msgid "Try another address"
+msgstr "Intentar con otra dirección"
+
+#: templates/contact.html:39
+msgid "Send message &raquo;"
+msgstr "Enviar mensaje &raquo;"
+
+#: templates/form.html:25 templates/tasks/reward_create_form_inner.html:14
+#: templates/tasks/reward_edit_form_inner.html:14
+#: templates/tasks/task_create_form_inner.html:14
+#: templates/tasks/task_edit_form_inner.html:14
+msgid "Save &raquo;"
+msgstr "Guardar &raquo;"
+
+#: templates/navbar.html:32
+msgid "Go"
+msgstr "Ir"
+
+#: templates/navbar.html:37
+msgid "Q?"
+msgstr "I?"
+
+#: templates/navbar.html:38
+msgid "My Profile"
+msgstr "Mi Perfil"
+
+#: templates/navbar.html:40
+msgid "User"
+msgstr "Usuario"
+
+#: templates/navbar.html:43
+msgid "Log in"
+msgstr "Iniciar sesión"
+
+#: templates/navbar.html:45
+msgid "Sign up"
+msgstr "Regístrate"
+
+#: templates/navbar.html:48
+msgid "Log out"
+msgstr "Cerrar sesión"
+
+#: templates/tasks/my_profile.html:30
+msgid "Hi"
+msgstr "¡Hola"
+
+#: templates/tasks/my_profile.html:30
+msgid "welcome back to Crowd-Geocode!"
+msgstr "bienvenido de vuelta a Crowd-Geocodificar!"
+
+#: templates/tasks/my_profile.html:50
+msgid "User Profile"
+msgstr "Perfil de usuario"
+
+#: templates/tasks/my_profile.html:51 templates/tasks/my_profile.html.py:98
+msgid "Task Collaborator Area"
+msgstr "Área de colaborador"
+
+#: templates/tasks/my_profile.html:52 templates/tasks/my_profile.html:151
+msgid "Task Creator Area"
+msgstr "Área de creador de tareas"
+
+#: templates/tasks/my_profile.html:60
+msgid "User Details"
+msgstr "Detalles de usuario"
+
+#: templates/tasks/my_profile.html:62
+msgid "Username:"
+msgstr "Nombre de usuario:"
+
+#: templates/tasks/my_profile.html:66
+msgid "First name:"
+msgstr "Nombre:"
+
+#: templates/tasks/my_profile.html:70
+msgid "Last name:"
+msgstr "Apellidos:"
+
+#: templates/tasks/my_profile.html:74
+msgid "Email:"
+msgstr "Correo electrónico:"
+
+#: templates/tasks/my_profile.html:78
+msgid "Update details"
+msgstr "Actualizar detalles"
+
+#: templates/tasks/my_profile.html:82
+msgid "User Description"
+msgstr "Descripción del usuario"
+
+#: templates/tasks/my_profile.html:84
+msgid "Description:"
+msgstr "Descripción:"
+
+#: templates/tasks/my_profile.html:88
+msgid "My Postal Code:"
+msgstr "Mi código postal:"
+
+#: templates/tasks/my_profile.html:92
+msgid "Update profile"
+msgstr "Actualiar perfil"
+
+#: templates/tasks/my_profile.html:101
+msgid "Search for Tasks!"
+msgstr "¡Buscar tareas!"
+
+#: templates/tasks/my_profile.html:102
+msgid "Chase for Task's Rewards!"
+msgstr "¡Cazar recompensas!"
+
+#: templates/tasks/my_profile.html:104
+msgid "My Tasks"
+msgstr "Mis tareas"
+
+#: templates/tasks/my_profile.html:108 templates/tasks/my_profile.html:131
+#: templates/tasks/my_profile.html:157 templates/tasks/my_profile.html:182
+msgid "Task ID"
+msgstr "ID de la tarea"
+
+#: templates/tasks/my_profile.html:109 templates/tasks/my_profile.html:158
+msgid "Task Name"
+msgstr "Nombre de la tarea"
+
+#: templates/tasks/my_profile.html:110 templates/tasks/my_profile.html:159
+msgid "Task Status"
+msgstr "Estado de la tarea"
+
+#: templates/tasks/my_profile.html:111 templates/tasks/my_profile.html:133
+#: templates/tasks/my_profile.html:160 templates/tasks/my_profile.html:185
+#: templates/tasks/my_profile.html:208
+msgid "Actions"
+msgstr "Acciones"
+
+#: templates/tasks/my_profile.html:128
+msgid "My Rewards to Request"
+msgstr "Mis recompensas a solicitar"
+
+#: templates/tasks/my_profile.html:132 templates/tasks/my_profile.html:184
+#: templates/tasks/my_profile.html:205
+msgid "Reward Name"
+msgstr "Nombre de la recompensa"
+
+#: templates/tasks/my_profile.html:153
+msgid "My Created Tasks List"
+msgstr "Mi lista de tareas creadas"
+
+#: templates/tasks/my_profile.html:153
+msgid "Create New Task"
+msgstr "Crear nueva tarea"
+
+#: templates/tasks/my_profile.html:176
+msgid "Upload Data"
+msgstr "Subir archivo con direcciones"
+
+#: templates/tasks/my_profile.html:179
+msgid "Rewards for My Tasks"
+msgstr "Recompensas para mis tareas"
+
+#: templates/tasks/my_profile.html:179
+msgid "Create New Reward"
+msgstr "Crear nueva recompensa"
+
+#: templates/tasks/my_profile.html:183
+msgid "Task reward active?"
+msgstr "La recompensa está activa"
+
+#: templates/tasks/my_profile.html:202
+msgid "Rewards to Deliver"
+msgstr "Recompensas a entregar"
+
+#: templates/tasks/my_profile.html:206
+msgid "Collaborator Name"
+msgstr "Nombre del colaborador"
+
+#: templates/tasks/my_profile.html:207
+msgid "Collaborator Email"
+msgstr "Correo electrónico"
+
+#: templates/tasks/reward_delete_form_inner.html:8
+#: templates/tasks/task_delete_form_inner.html:8
+msgid "Confirm &raquo;"
+msgstr "Confirmar &raquo;"
+
+#: templates/tasks/task_list.html:90 templates/tasks/taskreward_list.html:75
+msgid "I want to collaborate on this!"
+msgstr "Quiero colaborar en esta"
+
+#: templates/tasks/upload_file_form.html:42
+msgid "Upload &raquo;"
+msgstr "Subir &raquo;"

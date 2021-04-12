@@ -1,0 +1,108 @@
+{% load i18n %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="es">
+<meta charset="UTF-8" />
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <head>
+        <title>{% block head_title %} {% endblock %} | Crowd-GeoCoding</title>
+
+         <!-- Boostrap -->
+         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet">
+         <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet">
+        
+         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css">
+         <!-- JQuery -->
+	       <link rel="stylesheet" type="text/css" href="https://code.jquery.com/ui/1.11.4/themes/ui-lightness/jquery-ui.css"> 
+<style>
+      body{ 
+        padding-top: 0.5%;
+        padding-left: 2%;
+        padding-right: 2%; 
+               }
+    .navbar{
+        margin-bottom:10px;
+    }
+    .alert.alert-success {
+          border: 3px solid #1E824C;
+          border-radius: 5px;
+          background-color: rgba(30, 130, 76, 0.4);
+           }
+    .alert-alert-warning {
+          border: 3px solid #D35400;
+          border-radius: 5px;
+          background-color: rgba(211, 84, 0, 0.4); }
+    .alert {
+          border: 3px solid #D91E18;
+          border-radius: 5px;
+          background-color: rgba(217, 30, 24, 0.4); }
+    .alert.alert-info {
+          border: 3px solid #3498DB;
+          border-radius: 5px;
+          color: #fff;
+          background-color: rgba(52, 152, 219, 0.4); }
+    .modal-backdrop {
+        z-index: -1;
+      }
+      .bs-header {
+        color: #e3effe;
+        background-color: #7A89A6;
+        }
+      .bs-header {
+        padding: 20px 15px 30px; /* side padding builds on .container 15px, so 30px */
+        font-size: 16px;
+        text-align: center;
+        text-shadow: 0 1px 0 rgba(0,0,0,.15);
+      }
+      .bs-header h1 {
+        color: #fff;
+      }
+      .bs-header p {
+        font-weight: 300;
+        line-height: 1.5;
+      }
+      .bs-header .container {
+        position: relative;
+      }
+      .spinner {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        margin-left: -50px; /* half width of the spinner gif */
+        margin-top: -50px; /* half height of the spinner gif */
+        text-align:center;
+        z-index:1234;
+        overflow: auto;
+        width: 100px; /* width of the spinner gif */
+        height: 102px; /*hight of the spinner gif +2px to fix IE8 issue */
+    }
+</style>
+{% block head_style %}
+{% endblock %}
+{% include 'navbar.html' %}
+</head>
+<body>
+    <div id="spinner_tool" class="spinner" style="display:none;">
+      <i class="fa fa-cog fa-spin fa-5x"></i>
+    </div>
+    <div id="spinner_earth" class="spinner" style="display:none;">
+          <img id="img-spinner" src="{% static 'img/earth-loader.gif' %}" alt="Loading"/>
+    </div>
+{% block content %} 
+{% endblock %}
+<hr>
+<footer>
+  <h6>Crowd-GeoCoding | 2020 © All rights reserved</h6>
+</footer>
+    <!-- JQuery --> 
+    <script type='text/javascript' src='https://code.jquery.com/jquery-2.1.4.min.js'></script>
+    <script type='text/javascript' src='https://code.jquery.com/ui/1.11.4/jquery-ui.min.js'></script>
+    <script src="https://malsup.github.com/jquery.form.js"></script>
+    <!-- Bootstrap -->
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    {% block jquery %}
+    {% endblock %}
+ </body>
+</html>

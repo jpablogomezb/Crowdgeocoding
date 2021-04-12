@@ -1,0 +1,881 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% block head_title %} CGC Task {% endblock %}
+{% block head_style %}
+<style>
+    .navbar  {
+      background-color: #F5F5F5;
+      /*background-color: #7A89A6;*/
+    }
+    #lan_picker{
+       color: #000 !important;
+    }
+    .navbar .nav > li > a:hover {
+        color: #000 !important;
+        background-color: #eee;
+    }
+    #listDirecciones{
+         text-align: center;
+          }
+    #map {    
+        width: 100%;
+        height: 33em;
+        background-color: #eee;   
+        }
+    #opciones{
+        text-align: center; 
+        }
+    #id_geo {
+        display: none;
+    }
+    #btnGooglePoint{
+      background-color: #F90101;
+      border-color: #F90101;
+    }
+    #btnBingPoint{
+      background-color: #FFAC00;
+      border-color: #FFAC00;
+    }
+    #btnHerePoint{
+      background-color: #0D2B81;
+      border-color: #0D2B81;
+    }
+    #btnOSMPoint{
+      background-color: #2E2B2E;
+      border-color: #2E2B2E;
+    }
+</style>
+<!-- Leaflet 
+<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" /> -->
+<!-- Mapbox -->
+<link href='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.css' rel='stylesheet' />
+<link href='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.css' rel='stylesheet' />
+{% endblock %}
+{% block content %}
+<div class="row">   
+  <!-- Success alert box -->
+        <div id="success" class="alert alert-dismissible alert-success" style="display:none;">
+            <a class="close">×</a><i class="fa fa-check"></i><strong> {% blocktrans %} Good job!</strong> Thanks, your answer was saved correctly. You could make other locations! {% endblocktrans %}
+        </div>
+  <!-- Success alert box -->
+        <div id="user_message" class="alert alert-dismissible alert-info" style="display:none;">
+            <a class="close">×</a><i class="fa fa-info"> </i><strong> </strong>
+        </div>
+  <!-- Success alert box -->
+        <div id="error_message" class="alert alert-dismissible alert-danger" style="display:none;">
+            <a class="close">×</a><i class="fa fa-info"> </i><strong> </strong>
+        </div>
+<div id="PanelLocalizaciones" class="col-md-3 col-sm-12">
+   
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 style="text-align:center" class="panel-title"><span class="label label-default"> {% trans "1. My locations to geocode:" %}</span></h3>
+    </div>
+    <div class="panel-body" id="tableContainer">
+    </div>
+   </div>
+
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 style="text-align:center" class="panel-title"><span class="label label-default"> {% trans "2. Select an address from the list to start" %}</span>
+      </h3>
+    </div>
+    <div class="panel-body">      
+        <div>
+          <label id="lbl_dir_seleccionada" class="control-label" for="inputSmall">{% trans "Selected adress:" %}</label>
+          <input type="hidden" class="form-control input-sm" id="dir_seleccionada" 
+          name="dir_seleccionada">
+          <input type="text" class="form-control input-sm" disabled="" id="dir_seleccionada2" 
+          name="dir_seleccionada2">
+        </div>
+        <br>   
+        <div style="text-align:center">
+            <button  id="btnGeocoding" class="btn btn-warning btn-md" type="submit" >{% trans "Start Crowd-Geocoding" %} <span class="fa fa-chevron-circle-right"></span></button>
+        </div>
+    </div>
+   </div>
+
+</div>  
+
+<div id="PanelMapa" class="col-md-5 col-sm-12">
+  
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 style="text-align:center" class="panel-title"><span class="label label-default">{% trans "3a. Explore results on the map:" %}</span></h3>
+    </div>
+    <div class="panel-body">   
+      <div class="small" style="margin-top:-10px; text-align: center;">
+         <span id='direccion_sol' class="label label-info label-xs"></span>
+      </div>
+      <div style="margin-top:5px" id="map"></div>
+        
+    </div>
+  </div>
+
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h3 style="text-align:center" class="panel-title"><span class="label label-default">{% trans "4. Save the Crowd-Geocoding Task" %}</span></h3>
+    </div>
+    <div class="panel-body">
+
+     <div style="margin-top:2px; text-align: center;" class="well well-sm">
+      <i class="fa fa-map-marker"></i>: {% trans "Latitude:" %} <strong> <span id="latFinal"></span></strong>,
+       {% trans "Longitude:" %} <strong> <span id="longFinal"></span> </strong>
+      <span id="id_geo"  value="100"> </span>
+      <span id="lng_sc"></span>
+      <span id="lat_sc"></span>
+      </div>
+
+      <div style="margin-top:-8px; text-align: center;">
+        <button id="answerbtn" class="btn btn-success btn-submit btn-lg"><i class="fa fa-save"></i> {% trans "Save coordinates for this address" %}</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div id= "PanelResultado" class="col-md-4 col-sm-12">
+  <div id="opciones">
+
+    <div class="panel panel-default">
+
+      <div class="panel-heading">
+        <h3 style="text-align:center" class="panel-title"><span class="label label-default">{% trans "3b. Select the best location output:" %}</span></h3>
+      </div>
+
+      <div class="panel-body">
+      <table id="results_table" class="table table-condensed table-hover" style="text-align:center;">
+        <thead>
+          <tr>
+            <th style="text-align: center;" colspan=4><h5>{% trans "What do you think is the best result?" %} </h5></th>
+          </tr>
+        </thead>
+        <tbody>
+        <tr id="googleRow">
+            <th style="text-align:center;" colspan=3>
+                <button id="btnGooglePoint" class="btn btn-info btn-xs"><i class="fa fa-check"></i>
+                    Google Maps
+                </button>
+            </th>
+        </tr>
+          <tr id="google_data" style="text-align:center; font-size:14px">
+      
+          </tr>
+          <tr>
+            <th style="text-align:center;" colspan=3>
+              <div id="confBarGoogle" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10" style="width:0%">
+                <div id="g_barText"> </div>   
+              </div>
+            </th>
+          </tr>
+          <th style="text-align:center;" colspan=3>
+                <button id="btnBingPoint" class="btn btn-info btn-xs"><i class="fa fa-check"></i>
+                  Bing Maps
+                </button>
+          </th>
+          
+          <tr id="bing_data" style="text-align:center; font-size:14px">
+            
+          </tr>
+          <tr>
+            <th style="text-align:center;" colspan=3>
+              <div id="confBarBing" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10" style="width:0%">
+               <div id="b_barText"> </div>
+              </div>
+            </th>
+          </tr>
+         
+          <tr>
+            <th style="text-align:center;" colspan=3>
+              <button id="btnHerePoint" class="btn btn-info btn-xs"><i class="fa fa-check"></i>
+                MapQuest
+              </button>
+            </th>
+          </tr>
+          
+          <tr id="mapquest_data" style="text-align:center; font-size:14px">
+            
+          </tr>
+          <tr>
+            <th style="text-align:center;" colspan=3>
+              <div id="confBarHere"class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10" style="width:0%">
+               <div id="h_barText"> </div>
+              </div>
+            </th>
+          </tr>
+          
+          <tr>
+            <th style="text-align:center;" colspan=3>
+              <button id="btnOSMPoint" class="btn btn-info btn-xs"><i class="fa fa-check"></i>
+                OSM
+              </button>
+            </th>
+          </tr>
+          
+          <tr id="osm_data" style="text-align:center; font-size:14px">
+            
+          </tr>
+          <tr>
+            <th style="text-align:center;" colspan=3>
+              <div id="confBarOSM" class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="10" style="width:0%">
+               <div id="o_barText"> </div>
+              </div>
+            </th>
+          </tr>
+          
+        </tbody>
+      </table> 
+
+      <table class="table table-bordered table-hover ">
+         <thead>
+            <tr>
+              <th style="text-align: center;" ><h6>{% trans "None of them convince you?" %}</h6></th>
+            </tr>
+         </thead>
+         <tbody>
+            <tr>
+              <td><button id="btnUserPoint" class="btn btn-danger btn-sm"><i class="fa fa-crosshairs"></i>
+                  {% trans "Suggest location" %}
+              </button>
+              <br>
+              <br>
+              <button id="btnCancel" class="btn btn-default btn-xs"><i class="fa fa-close"></i>  {% trans "Try another address" %}
+              </button>
+              </td>
+            </tr>
+         </tbody>
+      </table> 
+      </div>
+    </div>
+  </div>
+  </div>
+<!-- Row ends -->
+</div>
+{% endblock %}
+
+{% block jquery %}
+<script>
+
+$(document).ready(function(){
+  initMap()
+});
+
+function initMap() {
+  lat_sc = 0
+  lng_sc = 0
+  id_geo.innerHTML = ''
+  map = ""
+  res_data = null
+  console.log(res_data)
+  //Function to load address list to geocode
+  getAddressList();
+  $('#dir_seleccionada2').hide();
+  $('#lbl_dir_seleccionada').hide();
+  $('#btnGeocoding').hide();
+  $("#answerbtn").prop("disabled",true);
+  $("#btnUserPoint").prop("disabled",true);
+  $("#btnCancel").prop("disabled",true);
+  $("#btnGooglePoint").prop("disabled",true);
+  $("#btnBingPoint").prop("disabled",true);
+  $("#btnHerePoint").prop("disabled",true);
+  $("#btnOSMPoint").prop("disabled",true);
+  longFinal.innerHTML = ''
+  latFinal.innerHTML = ''
+  
+  //MAPA - utilizando Mapbox.js y Leaflet//
+  //token para acceder a Tile de Mapbox.
+  L.mapbox.accessToken = '{{mapbox_api}}';
+     
+  map = L.mapbox.map('map', null).setView([40.3, -4], 1);
+
+  //CAPAS BASE//
+  // WMS CartoCiudad
+  // var CartoCiudad = L.tileLayer.wms("http://www.cartociudad.es/wms/CARTOCIUDAD/CARTOCIUDAD", {
+  //       layers: ['DivisionTerritorial', 'CodigoPostal', 'FondoUrbano','Vial','Portal'],
+  //       format: 'image/png',
+  //       transparent: true,
+  //       maxZoom: 25,           
+  //       attribution: "CartoCiudad © Instituto Geográfico Nacional de España"
+  //     }); 
+
+  //Las opciones para las capas de Google: SATELLITE, ROADMAP, HYBRID o TERRAIN 
+  //var gglh = new L.Google('HYBRID');
+  //var ggst = new L.Google('ROADMAP');
+
+  var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: 'Map data &copy; <a href="https://openstreetmap.org">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://cloudmade.com">CloudMade</a>',
+        maxZoom: 25})
+
+  //var mapbox_streets = L.mapbox.tileLayer('mapbox.streets')
+  // var mapbox_outdoors = L.mapbox.tileLayer('examples.ik7djhcc')
+  var mapbox_sat = L.mapbox.tileLayer('mapbox.satellite')
+  var bing = new L.BingLayer('{{bing_api}}');   
+
+  var baseMaps = {
+          //"CartoCiudad Portales": CartoCiudad,
+          "OpenStreetMap": osm,
+          "Bing Maps": bing,
+          //"Mapbox": mapbox_streets,
+          //"Mapbox Topográfico": mapbox_outdoors,
+        //"Google Maps": ggst,
+          "Mapbox Images": mapbox_sat,
+          //"Google Images": gglh,
+          
+        };
+
+  digitize_coord = new L.FeatureGroup();
+  map.addLayer(digitize_coord);
+
+  map.on('draw:created', function (e) {
+        
+        var type = e.layerType,
+        layer = e.layer;
+        digitize_coord.addLayer(layer);
+
+        if (type === 'marker') {
+            layer.bindPopup('location suggested!');
+            layer.on('dragend', ondragend);
+        // Set the initial marker coordinate on load.
+        ondragend();
+        function ondragend() {
+            m = layer.getLatLng();
+            longFinal.innerHTML =  m.lng 
+            latFinal.innerHTML = m.lat
+            lng_sc = String(m.lng.toFixed(6))
+            lat_sc = String(m.lat.toFixed(6))
+                    }
+                }
+          });
+  
+  $("#btnUserPoint").click(function(){
+
+        id_geo.innerHTML = 0
+
+        map.addLayer(digitize_coord);
+
+        var markerDrawer = new L.Draw.Marker(map);     
+        markerDrawer.enable();  
+            });
+
+  map.addControl(L.mapbox.geocoderControl('mapbox.places', {
+          autocomplete: true
+      }));
+  var editControl = new L.Control.Draw({
+              draw: false,
+              edit: {
+                  featureGroup: digitize_coord
+                  }
+              }).addTo(map);
+
+  L.control.scale().addTo(map);
+  L.control.layers(baseMaps).addTo(map);
+  map.addLayer(osm);  
+  //Maps script ends
+
+  $('#listDirecciones').click(function(e){
+    //alert($(e.target).text());
+    $('#dir_seleccionada2').show();
+    $('#lbl_dir_seleccionada').show();
+    $('#btnGeocoding').show();
+    $('#dir_seleccionada').val($(e.target).text());
+    $('#dir_seleccionada2').val($(e.target).text());
+  })
+
+  $('#btnGeocoding').click(function getData(){
+      //reload addresses
+      $('#dir_seleccionada2').hide();
+      $('#lbl_dir_seleccionada').hide();
+      $('#btnGeocoding').hide();
+      longFinal.innerHTML = ''
+      latFinal.innerHTML =  ''
+      console.log("getting geocoder's results...")
+      // AJAX GET
+      $.ajax({
+            url : "/geocode/", // the endpoint
+            type : "GET", // http method
+            data: { address: $('#dir_seleccionada').val() }, 
+            dataType : "json",
+            beforeSend: function(){
+                 $('#spinner_earth').show()
+                    },
+            complete: function(){
+                 $('#spinner_earth').hide();
+                       },
+            success: handleData,
+            // handle a non-successful response
+            error : function(xhr,errmsg,err) {
+                $('#error_message').html("<div class='alert-box alert radius' data-alert>Oops! Try later please, we have encountered an error: "+errmsg+ 
+                    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+              }
+
+        });
+    });
+   
+  function handleData(data) {
+
+      digitize_coord.clearLayers();
+      $("#answerbtn").prop("disabled",false);
+      $("#btnUserPoint").prop("disabled",false);
+      $("#btnCancel").prop("disabled",false);
+      addGeoJsonLayer(data);
+      addAttributesData(data);
+      selectBestGeocoder(data);
+      res_data=data
+      console.log(res_data)
+    }
+
+    $('#btnCancel').click(function tryAnother(){
+      //Aquí debería sumarle una respuesta nula a la dirección seleccionada
+      res_data=null
+      console.log(res_data)
+      $("#answerbtn").prop("disabled",true);
+      $("#btnUserPoint").prop("disabled",true);
+      $("#btnCancel").prop("disabled",true);
+      $("#btnGooglePoint").prop("disabled",true);
+      $("#btnBingPoint").prop("disabled",true);
+      $("#btnHerePoint").prop("disabled",true);
+      $("#btnOSMPoint").prop("disabled",true);
+      $("#results_table td").remove()
+      $('#g_barText').html('');
+      $('#b_barText').html('');
+      $('#h_barText').html('');
+      $('#o_barText').html('');
+      $("#direccion_sol").html('');
+      $('#listDirecciones').remove();
+      getAddressList();
+      longFinal.innerHTML = ''
+      latFinal.innerHTML = ''
+      id_geo.innerHTML = ''
+      map.setView(new L.LatLng(40.3, -4),1);
+      geocoder_points.clearLayers();
+      if (map.hasLayer(digitize_coord)){
+        digitize_coord.clearLayers();
+      }
+    });
+
+}
+//Onload page function ends here
+function getAddressList(){
+  console.log("getting address to crowdgeolocate...")
+  $('#listDirecciones').remove();
+  var table = $('<table></table>').attr('id', 'listDirecciones').addClass('table table-striped table-hover');
+  $('#tableContainer').append(table);
+  // AJAX GET
+  $.ajax({
+        url : "/get-address/", // the endpoint
+        type : "GET", // http method
+        data: { task_id: {{object.pk}} },
+        dataType : "json",
+        beforeSend: function(){
+                 $('#spinner_earth').show()
+                    },
+        complete: function(){
+                 $('#spinner_earth').hide();
+                       },
+        // handle a successful response
+        success : function(data) {
+          console.log(data)
+          $.each(data, function(i,val){
+          //$('#listDirecciones').append('<option value=" ' + val.domicilio +' "><a href="">'+ val.domicilio + '</a></option>');
+
+          $('#listDirecciones').append('<tr class="warning" ><td><span style="color:blue;font-weight:bold;font-size:11px">' + val + '</span></td></tr>');
+
+          });
+            console.log("success"); // another sanity check  
+        },
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            $('#error_message').html("<div class='alert-box alert radius' data-alert>Oops! Try later please, we have encountered an error: "+errmsg+ 
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+  }
+
+  function addGeoJsonLayer(data){
+     
+       var geocoder_results = '{' + '"type":' + '"FeatureCollection",' +
+        '"features":[ ';
+
+          if (data.google_longitude != null && data.google_latitude != null){
+              geocoder_results = geocoder_results + 
+
+            '{' + '"type":' + '"Feature",' + 
+              '"geometry":{' + '"type":' + '"Point",' + '"coordinates":[' + data.google_longitude + ',' + data.google_latitude + ']},' +
+              '"properties":{' + '"title":' + '"Google Maps",' + ' "description":' + '"lat: ' + data.google_latitude + ', lng: ' + data.google_longitude + '"' + ',' + ' "marker-color":' +  ' "#F90101" }}';
+              }
+
+          if (data.bing_longitude != null && data.bing_latitude != null){
+              if (data.google_latitude == null){
+              geocoder_results = geocoder_results + 
+              '{' + '"type":' + '"Feature",' + 
+              '"geometry":{' + '"type":' + '"Point",' + '"coordinates":[' + data.bing_longitude + ',' + data.bing_latitude + ']},' +
+              '"properties":{' + '"title":' + '"Bing Maps",' + ' "description":' + '"lat: ' + data.bing_latitude + ', lng: ' + data.bing_longitude + '"'  + ',' + ' "marker-color":' +  ' "#FFAC00" }}';
+                } else {
+                geocoder_results = geocoder_results + 
+                ',{' + '"type":' + '"Feature",' + 
+              '"geometry":{' + '"type":' + '"Point",' + '"coordinates":[' + data.bing_longitude + ',' + data.bing_latitude + ']},' +
+              '"properties":{' + '"title":' + '"Bing Maps",' + ' "description":' + '"lat: ' + data.bing_latitude + ', lng: ' + data.bing_longitude + '"'  + ',' + ' "marker-color":' +  ' "#FFAC00" }}';
+                }
+            }
+
+          if (data.mapquest_latitude != null && data.mapquest_latitude != null){
+              if (data.google_latitude == null && data.bing_latitude == null){
+                geocoder_results = geocoder_results +
+                '{' + '"type":' + '"Feature",' + 
+                '"geometry":{' + '"type":' + '"Point",' + '"coordinates":[' + data.mapquest_longitude + ',' + data.mapquest_latitude + ']},' +
+                '"properties":{' + '"title":' + '"MapQuest",' + ' "description":' + '"lat: ' + data.mapquest_latitude + ', lng: ' + data.mapquest_longitude + '"'  + ',' + ' "marker-color":' +  ' "#0D2B81" }}';
+                } else{
+                  geocoder_results = geocoder_results +
+                  ',{' + '"type":' + '"Feature",' + 
+                '"geometry":{' + '"type":' + '"Point",' + '"coordinates":[' + data.mapquest_longitude + ',' + data.mapquest_latitude + ']},' +
+                '"properties":{' + '"title":' + '"MapQuest",' + ' "description":' + '"lat: ' + data.mapquest_latitude + ', lng: ' + data.mapquest_longitude + '"'  + ',' + ' "marker-color":' +  ' "#0D2B81" }}';
+                }
+            }
+
+          if (data.osm_longitude != null && data.osm_latitude != null){
+              if (data.google_latitude == null && data.bing_latitude == null && data.mapquest_latitude == null){
+                geocoder_results = geocoder_results + 
+                '{' + '"type":' + '"Feature",' + 
+                '"geometry":{' + '"type":' + '"Point",' + '"coordinates":[' + data.osm_longitude + ',' + data.osm_latitude + ']},' +
+                '"properties":{' + '"title":' + '"OSM",' + ' "description":' + '"lat: ' + data.osm_latitude + ', lng: ' + data.oms_longitude + '"'  + ',' + ' "marker-color":' +  ' "#2E2B2E" }}';
+              } else {
+                geocoder_results = geocoder_results + 
+                ',{' + '"type":' + '"Feature",' + 
+                '"geometry":{' + '"type":' + '"Point",' + '"coordinates":[' + data.osm_longitude + ',' + data.osm_latitude + ']},' +
+                '"properties":{' + '"title":' + '"OSM",' + ' "description":' + '"lat: ' + data.osm_latitude + ', lng: ' + data.oms_longitude + '"'  + ',' + ' "marker-color":' +  ' "#2E2B2E" }}';
+              }
+            }
+ 
+          geocoder_results = geocoder_results + ']}';
+
+          var geojson_res = JSON.parse(geocoder_results);
+          console.log(geojson_res);
+          geocoder_points = map.featureLayer.setGeoJSON(geojson_res);
+          //Fit the map to the bounds.
+          map.fitBounds(geocoder_points);
+
+    }
+
+  function addAttributesData(data){
+        $("#results_table td").remove()
+        $("#direccion_sol").html(data.address_requested);
+        $("#user_message").html(data.result_message);
+        $("#user_message").fadeIn();
+        setTimeout(function() { $("#user_message").fadeOut();}, 8000);          
+    //Change color, value of the result's progress bars and display attributes data
+        if (data.google_latitude != null ){
+          $("#btnGooglePoint").prop("disabled",false);
+          $("#results_table").find('#google_data')
+                .append($('<td><h5><small><strong>' + '{% trans "Coordinates:" %}' + '</small></strong></h5><p>'+ data.google_latitude.toFixed(6) + ', ' + data.google_longitude.toFixed(6) + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Accuracy:" %}' + '</small></strong></h5><p>'+ data.google_accuracy + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Quality:" %}' + '</small></strong></h5><p>'+ data.google_quality + '</p></td>')
+            );
+
+        switch (data.google_confidence) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+              $('#confBarGoogle').css('width', data.google_confidence*10+'%').attr('aria-valuenow', data.google_confidence);
+              $('#confBarGoogle').removeClass().addClass("progress-bar progress-bar-danger");
+              $('#g_barText').html('{% trans "Confidence: " %}' + data.google_confidence);
+              break;
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+              $('#confBarGoogle').css('width', data.google_confidence*10+'%').attr('aria-valuenow', data.google_confidence);
+              $('#confBarGoogle').removeClass().addClass("progress-bar progress-bar-warning");
+              $('#g_barText').html('{% trans "Confidence: " %}' + data.google_confidence);
+              break;
+          default:
+              $('#confBarGoogle').css('width', data.google_confidence*10+'%').attr('aria-valuenow', data.google_confidence);
+              $('#confBarGoogle').removeClass().addClass("progress-bar progress-bar-success");
+              $('#g_barText').html('{% trans "Confidence: " %}' + data.google_confidence);
+              break;
+          }}
+          else {
+            $("#btnGooglePoint").prop("disabled",true);
+            $('#g_barText').html('');
+          }
+      
+        if (data.bing_latitude != null){
+          $("#btnBingPoint").prop("disabled",false);
+          $("#results_table").find('#bing_data')
+                .append($('<td><h5><small><strong>' + '{% trans "Coordinates:" %}' + '</small></strong></h5><p>'+ data.bing_latitude.toFixed(6) + ', ' + data.bing_longitude.toFixed(6) + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Accuracy:" %}' + '</small></strong></h5><p>'+ data.bing_accuracy + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Quality:" %}' + '</small></strong></h5><p>'+ data.bing_quality + '</p></td>')
+            );
+
+        switch (data.bing_confidence) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+              $('#confBarBing').css('width', data.bing_confidence*10+'%').attr('aria-valuenow', data.bing_confidence);
+              $('#confBarBing').removeClass().addClass("progress-bar progress-bar-danger");
+              $('#b_barText').html('{% trans "Confidence: " %}' + data.bing_confidence);
+              break;
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+              $('#confBarBing').css('width', data.bing_confidence*10+'%').attr('aria-valuenow', data.bing_confidence);
+              $('#confBarBing').removeClass().addClass("progress-bar progress-bar-warning");
+              $('#b_barText').html('{% trans "Confidence: " %}' + data.bing_confidence);
+              break;
+          default:
+              $('#confBarBing').css('width', data.bing_confidence*10+'%').attr('aria-valuenow', data.bing_confidence);
+              $('#confBarBing').removeClass().addClass("progress-bar progress-bar-success");
+              $('#b_barText').html('{% trans "Confidence: " %}' + data.bing_confidence);
+              break;
+          }}
+
+          else {
+            $("#btnBingPoint").prop("disabled",true);
+            $('#b_barText').html('');
+          }
+        
+        if (data.mapquest_latitude != null){
+          $("#btnHerePoint").prop("disabled",false);
+          $("#results_table").find('#mapquest_data')
+                .append($('<td><h5><small><strong>' + '{% trans "Coordinates:" %}' + '</small></strong></h5><p>'+ data.mapquest_latitude.toFixed(6) + ', ' + data.mapquest_longitude.toFixed(6) + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Accuracy:" %}' + '</small></strong></h5><p>'+ data.mapquest_accuracy + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Quality:" %}' + '</small></strong></h5><p>'+ data.mapquest_quality + '</p></td>')
+            );
+
+        switch (data.mapquest_confidence) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+              $('#confBarHere').css('width', data.mapquest_confidence*10+'%').attr('aria-valuenow', data.mapquest_confidence);
+              $('#confBarHere').removeClass().addClass("progress-bar progress-bar-danger");
+              $('#h_barText').html('{% trans "Confidence: " %}' + data.mapquest_confidence);
+              break;
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+              $('#confBarHere').css('width', data.mapquest_confidence*10+'%').attr('aria-valuenow', data.mapquest_confidence);
+              $('#confBarHere').removeClass().addClass("progress-bar progress-bar-warning");
+              $('#h_barText').html('{% trans "Confidence: " %}' + data.mapquest_confidence);
+              break;
+          default:
+              $('#confBarHere').css('width', data.mapquest_confidence*10+'%').attr('aria-valuenow',data.mapquest_confidence);
+              $('#confBarHere').removeClass().addClass("progress-bar progress-bar-success");
+              $('#h_barText').html('{% trans "Confidence: " %}' + data.mapquest_confidence);
+              break;
+          }}
+          else {
+            $("#btnHerePoint").prop("disabled",true);
+            $('#h_barText').html('');
+          }
+       
+        if (data.osm_latitude != null){
+          $("#btnOSMPoint").prop("disabled",false);
+          $("#results_table").find('#osm_data')
+                .append($('<td><h5><small><strong>' + '{% trans "Coordinates:" %}' + '</small></strong></h5><p>'+ data.osm_latitude.toFixed(6) + ', ' + data.osm_longitude.toFixed(6) + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Accuracy:" %}' + '</small></strong></h5><p>'+ data.osm_accuracy + '</p></td>' + '<td><h5><small><strong>' + '{% trans "Quality:" %}' + '</small></strong></h5><p>'+ data.osm_quality + '</p></td>')
+            );
+        switch (data.osm_confidence) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+              $('#confBarOSM').css('width', data.osm_confidence*10+'%').attr('aria-valuenow', data.osm_confidence);
+              $('#confBarOSM').removeClass().addClass("progress-bar progress-bar-danger");
+              $('#o_barText').html('{% trans "Confidence: " %}' + data.osm_confidence);
+              break;
+          case 4:
+          case 5:
+          case 6:
+          case 7:
+              $('#confBarOSM').css('width', data.osm_confidence*10+'%').attr('aria-valuenow', data.osm_confidence);
+              $('#confBarOSM').removeClass().addClass("progress-bar progress-bar-warning");
+              $('#o_barText').html('{% trans "Confidence: " %}' + data.osm_confidence);
+              break;
+          default:
+              $('#confBarOSM').css('width', data.osm_confidence*10+'%').attr('aria-valuenow', data.osm_confidence);
+              $('#confBarOSM').removeClass().addClass("progress-bar progress-bar-success");
+              $('#o_barText').html('{% trans "Confidence: " %}' + data.osm_confidence);
+              break;
+          }}
+          else {
+            $("#btnOSMPoint").prop("disabled",true);
+            $('#o_barText').html('');
+          }
+    }
+  
+  function selectBestGeocoder(data){
+          //If Google is selected
+          $("#btnGooglePoint").click(function(){
+            
+              longFinal.innerHTML =  data.google_longitude
+              latFinal.innerHTML =  data.google_latitude
+              id_geo.innerHTML =  1
+
+              });
+          //If Bing is selected
+          $("#btnBingPoint").click(function(){
+            
+              longFinal.innerHTML = data.bing_longitude
+              latFinal.innerHTML =  data.bing_latitude
+              id_geo.innerHTML =  2
+
+              });
+          //If Here is selected
+          $("#btnHerePoint").click(function(){
+            
+              longFinal.innerHTML =  data.mapquest_longitude
+              latFinal.innerHTML =  data.mapquest_latitude
+              id_geo.innerHTML =  3
+
+              });
+          //If OSM is selected
+          $("#btnOSMPoint").click(function(){
+            
+              longFinal.innerHTML = data.osm_longitude
+              latFinal.innerHTML =  data.osm_latitude
+              id_geo.innerHTML =  4
+
+              });
+    }
+
+  /*function saveGeocodersData(data){*/
+    //User send the results to database
+    $("#answerbtn").click(function(event){
+
+      event.preventDefault();
+      if (id_geo.innerHTML == '') {
+        alert("Please select one geocoder service on the results panel, as the best location for the input address");
+      }
+      else{
+         console.log("task-data submitted!")  // sanity check
+         answer_task_post();
+      }
+      // AJAX for posting
+      function answer_task_post() {
+          var None
+          None = ''
+          $("#user_message").html("we are sending the data...");
+          $("#user_message").fadeIn();
+          setTimeout(function() { $("#user_message").fadeOut();}, 3000);
+          console.log("working...") // sanity check
+          //console.log()
+
+          $.ajax({
+              url : "/save-answer/", // the endpoint
+              type : "POST", // http method
+              data : { task_id: {{object.pk}}, direccion_sol: res_data.address_requested, id_geo: $('#id_geo').text(), xGoogle: res_data.google_longitude , yGoogle: res_data.google_latitude, accuGoogle: res_data.google_accuracy , qualGoogle: res_data.google_quality, confGoogle: res_data.google_confidence, xBing : res_data.bing_longitude , yBing: res_data.bing_latitude, accuBing: res_data.bing_accuracy, qualBing: res_data.bing_quality, confBing: res_data.bing_confidence, xMapquest: res_data.mapquest_longitude , yMapquest: res_data.mapquest_latitude, accuMapquest: res_data.mapquest_accuracy, qualMapquest: res_data.mapquest_quality, confMapquest: res_data.mapquest_confidence, xOSM : res_data.osm_longitude , yOSM: res_data.osm_latitude, accuOSM: res_data.osm_accuracy, qualOSM: res_data.osm_quality, confOSM: res_data.osm_confidence, csX: lng_sc, csY: lat_sc, csrfmiddlewaretoken: '{{ csrf_token }}' }, // data sent with the post request
+              beforeSend: function(){
+                 $('#spinner_earth').show()
+                    },
+              complete: function(){
+                 $('#spinner_earth').hide();
+                       },
+              // handle a successful response
+              success : function() {
+                  $("#success").fadeIn();
+                  setTimeout(function() { $("#success").fadeOut();}, 6000);
+                  console.log("success"); // another sanity check
+                  $("#answerbtn").prop("disabled",true);
+                  $("#btnUserPoint").prop("disabled",true);
+                  $("#btnCancel").prop("disabled",true);
+                  $("#btnGooglePoint").prop("disabled",true);
+                  $("#btnBingPoint").prop("disabled",true);
+                  $("#btnHerePoint").prop("disabled",true);
+                  $("#btnOSMPoint").prop("disabled",true);
+                  $("#results_table td").remove()
+                  $('#g_barText').html('');
+                  $('#b_barText').html('');
+                  $('#h_barText').html('');
+                  $('#o_barText').html('');
+                  $("#direccion_sol").html('');
+                  $('#listDirecciones').remove();
+                  id_geo.innerHTML = ''
+                  longFinal.innerHTML = ''
+                  latFinal.innerHTML = ''
+                  map.setView(new L.LatLng(40.3, -4),1);
+                  geocoder_points.clearLayers();
+                  if (map.hasLayer(digitize_coord)){
+                    digitize_coord.clearLayers();
+                  }
+                  getAddressList();
+              },
+
+              // handle a non-successful response
+              error : function(xhr,errmsg,err) {
+                  $('#error_message').html("<div class='alert-box alert radius' data-alert>Oops! Try later please, we have encountered an error: "+errmsg+ 
+                      " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                  console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+              });
+          };
+    });
+
+/*}*/
+
+$(function() {
+    // This function gets cookie with a given name
+    function getCookie(name) {
+        var cookieValue = null;
+        if (document.cookie && document.cookie != '') {
+            var cookies = document.cookie.split(';');
+            for (var i = 0; i < cookies.length; i++) {
+                var cookie = jQuery.trim(cookies[i]);
+                // Does this cookie string begin with the name we want?
+                if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    var csrftoken = getCookie('csrftoken');
+
+    /*
+    The functions below will create a header with csrftoken
+    */
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    function sameOrigin(url) {
+        // test that a given url is a same-origin URL
+        // url could be relative or scheme relative or absolute
+        var host = document.location.host; // host + port
+        var protocol = document.location.protocol;
+        var sr_origin = '//' + host;
+        var origin = protocol + sr_origin;
+        // Allow absolute or scheme relative URLs to same origin
+        return (url == origin || url.slice(0, origin.length + 1) == origin + '/') ||
+            (url == sr_origin || url.slice(0, sr_origin.length + 1) == sr_origin + '/') ||
+            // or any other URL that isn't scheme relative or absolute i.e relative.
+            !(/^(\/\/|http:|https:).*/.test(url));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function(xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && sameOrigin(settings.url)) {
+                // Send the token to same-origin, relative URLs only.
+                // Send the token only if the method warrants CSRF protection
+                // Using the CSRFToken value acquired earlier
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+});
+
+</script>
+<!-- Leaflet -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script> 
+<!-- Mapbox -->
+<script src='https://api.tiles.mapbox.com/mapbox.js/v2.1.6/mapbox.js'></script>
+<script src='https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-draw/v0.2.2/leaflet.draw.js'></script>
+<!-- Google API -->
+<!-- <script type="text/javascript" src="//maps.googleapis.com/maps/api/js?key=" async></script> -->
+<!-- Google Maps Leaflet provider -->
+<!-- <script src="{% static 'js/Google.js' %}"></script> -->
+<script src="{% static 'js/Bing.js' %}"></script>
+{% endblock %}

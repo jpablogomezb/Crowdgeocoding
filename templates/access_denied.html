@@ -1,0 +1,16 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}Acceso restringido{% endblock %}
+
+{% block content %}
+
+<div style="text-align:center">
+	<p>Usuario: {{ user.username }} ({{ user.email }})</p>
+
+<h3>Sorry! You do not permission to edit this task...</h3>
+</div>
+
+
+{% endblock %}

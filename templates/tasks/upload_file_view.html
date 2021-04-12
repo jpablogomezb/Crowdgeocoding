@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block head_title %} Addresses File {{title_action}} {% endblock %}
+{% block jquery %}
+{% endblock %}
+{% block content %}
+<div class='row'>
+	<div id="Panel" class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+		<div class="panel panel-primary">
+	  		<div class="panel-heading">
+	    	<p class="panel-title" style="text-align:center">Username: {{ user.username }}</strong></p>
+	  		</div>
+		  	<div class="panel-body">
+		  	<h3>My File:</h3>
+		  	<br>
+		  	<a href="/media/{{object}}">Download here</a>		
+		  	</div>
+		</div>
+	</div>
+</div> 
+
+
+{% endblock %}

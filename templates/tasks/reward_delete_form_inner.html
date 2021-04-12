@@ -1,0 +1,13 @@
+
+{% load i18n %}
+<div class="row" style="text-align:center">
+<div class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+	<br>
+	<form action='{% url 'reward-delete' taskreward.id %}' method="post">{% csrf_token %}
+	    <h4><p>Are you sure you want to delete <h3>"{{ object  }}"? </h3></p></h4>
+	    <input type='submit' value= "{% trans 'Confirm &raquo;' %}" class='btn btn-success btn-sm' ></input>
+	</form
+	
+	<br>
+</div>
+</div>

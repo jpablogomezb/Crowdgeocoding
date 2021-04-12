@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %} {{title_action}} {% endblock %}
+
+{% block jquery %}
+
+ 
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+	<div id="Panel" class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+		<div class="panel panel-primary">
+	  		<div class="panel-heading">
+	    	<p class="panel-title" style="text-align:center">Username: {{ user.username }}</strong></p>
+	    	
+	  		</div>
+		  	<div class="panel-body">		
+					{% if form %}
+						<form method='POST' action=''>{% csrf_token %} 
+							{{ form | crispy }}
+						<input type='submit' style="float:left;" value= "{% trans 'Save &raquo;' %}" class='btn btn-primary' ></input>
+						</form> 
+					
+						<a href="{% url 'my-profile' %}" class="btn btn-default" style="float:right;">Cancel</a>
+					{% endif %}
+		  	</div>
+		</div>
+	</div>
+</div>
+
+
+{% endblock %}

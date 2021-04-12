@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+{% block head_title %} Upload Addresses {{title_action}} {% endblock %}
+{% block jquery %}
+<script type="text/javascript">
+$('#sendBtn').click(function(){
+		$('#spinner_tool').show()
+	});
+</script>
+{% endblock %}
+{% block content %}
+{% if messages %}
+<div class="container">
+                {% for message in messages %}
+                <div class="alert alert-dismissible {% if message.tags %}alert-{{ message.tags }} {% endif %}">
+                    {{ message }}
+                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                </div>
+                {% endfor %}      
+</div>
+{% endif %}
+<div class='row'>
+	<div id="Panel" class="col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+		<div class="panel panel-primary">
+	  		<div class="panel-heading">
+	    	<p class="panel-title" style="text-align:center">Username: {{ user.username }}</strong></p>
+	    	
+	  		</div>
+		  	<div class="panel-body">		
+				<form method='POST' action="{% url 'upload-file' %}"enctype='multipart/form-data'>{% csrf_token %} 
+					{{ form | crispy }}
+				<input type='submit' style="float:left;" id="sendBtn" value= "{% trans 'Upload &raquo;' %}" class='btn btn-primary' ></input>
+				</form> 
+		  	</div>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load crispy_forms_tags %}
+
+{% block head_title %} Contacto {% endblock %}
+
+{% block jquery %}
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+
+$('#id_user').val("{{ user.id }}")
+$('#id_name').val("{{ user.first_name}} {{ user.last_name}} ")
+$('#id_email').val("{{ user.email }}")
+
+});
+
+</script>
+ 
+{% endblock %}
+
+{% block content %}
+
+<div class='row'>
+	<div class='col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1'>
+		
+			<h2>{{title}}</h2>
+			<br>
+			{% if confirm_message %}
+			<p>{{confirm_message}}</p>
+			{% endif %}
+		
+		
+			{% if form %}
+				<form method='POST' action=''>{% csrf_token %} 
+					{{ form | crispy }}
+				<input type='submit' value= "{% trans 'Send message &raquo;' %}" class='btn btn-primary' ></input>
+				</form> 
+			{% endif %}
+		
+	</div>
+</div>
+
+{% endblock %}
+

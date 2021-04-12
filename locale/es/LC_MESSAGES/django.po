@@ -1,0 +1,137 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2015-07-30 09:26+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: app/settings.py:166
+msgid "English"
+msgstr ""
+
+#: app/settings.py:167
+msgid "Español"
+msgstr ""
+
+#: contact/views.py:11
+msgid "Need some help?"
+msgstr ""
+
+#: contact/views.py:31
+msgid "Thanks"
+msgstr ""
+
+#: contact/views.py:32
+msgid "We have received your message, we will contact you soon!"
+msgstr ""
+
+#: tasks/ajax.py:72 tasks/ajax.py:267
+msgid "No service geocode this location, could you find it on the map!"
+msgstr ""
+
+#: tasks/ajax.py:80 tasks/ajax.py:298
+msgid ""
+"Only OpenStreetMap service has been able to find this location, well at "
+"least one, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:84 tasks/ajax.py:312
+msgid ""
+"Only Here Maps service has been able to find this location, well at least "
+"one, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:87 tasks/ajax.py:320
+msgid ""
+"Here Maps and OpenStreetMap services have been able to find this location, "
+"let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:92 tasks/ajax.py:340
+msgid ""
+"Only Bing Maps service has been able to find this location, well at least "
+"one, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:95 tasks/ajax.py:348
+msgid ""
+"Bing Maps and OpenStreetMap services have been able to find this location, "
+"let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:98 tasks/ajax.py:361
+msgid ""
+"Bing Maps and Here Maps services have been able to find this location, let "
+"us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:102 tasks/ajax.py:370
+msgid ""
+"Bing Maps, Here Maps and OpenStreetMap services have been able to find this "
+"location, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:107 tasks/ajax.py:395
+msgid ""
+"Only Google Maps service has been able to find this location, well at least "
+"one, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:111 tasks/ajax.py:404
+msgid ""
+"Google Maps and OpenStreetMap services have been able to find this location, "
+"let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:115 tasks/ajax.py:420
+msgid ""
+"Google Maps and Here Maps services have been able to find this location, let "
+"us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:118 tasks/ajax.py:428
+msgid ""
+"Google Maps, Here Maps and OpenStreetMap services have been able to find "
+"this location, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:124 tasks/ajax.py:454
+msgid ""
+"Google Maps and Bing Maps services have been able to find this location, let "
+"us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:127 tasks/ajax.py:462
+msgid ""
+"Google Maps, Bing Maps and OpenStreetMap services have been able to find "
+"this location, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:130 tasks/ajax.py:488
+msgid ""
+"Google Maps, Bing Maps and Here Maps services have been able to find this "
+"location, let us see how is going!"
+msgstr ""
+
+#: tasks/ajax.py:132 tasks/ajax.py:510
+msgid ""
+"All geocoding services found this address, what location do you think will "
+"be the best!"
+msgstr ""
+
+#: tasks/ajax.py:140 tasks/ajax.py:525
+msgid "Platform services not available, please try it later."
+msgstr ""

@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+
+<!-- Optional theme -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap-theme.min.css">
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+
+<script src="https://malsup.github.com/jquery.form.js"></script>
+
+</head>
+<body>
+
+<div class="modal-dialog modal-lg"> 
+	<div class="modal-content"> 
+	<form id="task_update_form" method="post" class="form" role="form" action="{% url 'task-edit' task.pk %}"> 
+			<div class="modal-header"> 
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button> 
+				<h4 class="modal-title" id="myModalLabel">Task Id: {{ task.pk }}</h4> 
+			</div> 
+			<div class="modal-body"> {% csrf_token %} 
+				{{ form.non_field_errors }}
+			 <div class="form-group"> 
+			 	{% for field in form %} 
+			 	<div class="form-group"> 
+			 		{% if field.errors %} 
+			 		<ul class="form-errors"> 
+			 			{% for error in field.errors %} 
+			 			<li><span class="fa fa-exclamation-triangle"></span> <strong>{{ error|escape }}</strong>
+			 			</li> 
+			 			{% endfor %} 
+			 		</ul> 
+			 		{% endif %} 
+			 		{{ field.label_tag }} {{ field }} 
+			 		{% if field.help_text %}
+			 		<div class="form-helptext">{{ field.help_text }}</div>
+			 		{% endif %} 
+			 	</div> 
+			 	{% endfor %} 
+			 </div> 
+			</div> 
+
+		 	<div class="modal-footer"> 
+		 		
+		 		<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		 		<input type="submit" class="btn btn-primary" value="Save" style="margin-bottom: 5px;" /> 
+		 	</div> 
+		</form> 
+		<script> 
+
+	
+		
+		var form_options = { 
+			target: '#myModal', 
+			success: function() { } } 
+
+		$('#item_update_form').ajaxForm(form_options); 
+
+		
+		</script>
+
+	</div><!-- /.modal-content --> 
+</div><!-- /.modal-dialog --> - 
+
+</body>
+</html> 

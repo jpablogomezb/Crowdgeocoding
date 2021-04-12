@@ -1,0 +1,41 @@
+{% load crispy_forms_tags %}
+{% load i18n %}
+<div class="row">
+	<div id="Panel" class="col-sm-12 col-xs-12">
+		<div class="panel panel-primary">
+	  		<div class="panel-heading">
+	    	<p class="panel-title" style="text-align:center">{{title_action}}</p>
+	    	
+	  		</div>
+		  	<div class="panel-body">
+		  	<table class="table table-striped table-hover ">
+		  		<tr>
+		  			<td>
+				<h4 style='text-align:center'><span class="label label-default">{{object.task}} </span> </h4>
+					</td>
+				</tr>
+		  		<tr>
+		  			<td>
+				<h3>Reward Name: <span class="label label-default">{{object.name}} </span> </h3>
+					</td>
+				</tr>
+				<tr>
+					<td>
+				<h4>Description:</h4> {{object.description}} 
+					</td>
+				</tr>
+				<tr>
+					<td>
+				<h4>Reward goal: <span class="label label-info">{{object.reward_goal}}</span></h4>
+					</td>
+				</tr>
+		   </table>	
+		   		<h4 style='text-align:right'><small>This reward was created on {{object.created}} by {{object.task.creator.first_name}} {{object.task.creator.last_name}} - Username: {{object.task.creator}} </small> </h4>
+		   		<h5 style='text-align:right'><small>Last update: {{object.updated}} </small> </h5>
+
+		   		<a data-dismiss="modal" aria-hidden="true" class="btn btn-default" style="float:right;">Close view</a>
+				
+			</div>
+		</div>
+	</div>
+</div>

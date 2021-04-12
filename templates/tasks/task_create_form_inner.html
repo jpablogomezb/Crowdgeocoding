@@ -1,0 +1,22 @@
+{% load crispy_forms_tags %}
+{% load i18n %}
+<div class='row'>
+	<div id="Panel" class="col-sm-12 col-xs-12">
+		<div class="panel panel-primary">
+	  		<div class="panel-heading">
+	    	<p class="panel-title" style="text-align:center">{{title_action}} <br><strong>{{ user.first_name }} {{ user.last_name }} - Username: {{ user.username }}</strong></p>
+	    	
+	  		</div>
+		  	<div class="panel-body">	
+					{% if form %}
+						<form id="task_create_form" class="form" role='form'method='POST' action='{% url 'task-new' %}'>{% csrf_token %} 
+							{{ form | crispy }}
+						<input type='submit' style="float:left;" value= "{% trans 'Save &raquo;' %}" class='btn btn-primary' ></input>
+						</form> 
+					
+						<a data-dismiss="modal" aria-hidden="true" class="btn btn-default" style="float:right;">Cancel</a>
+					{% endif %}
+		  	</div>
+		</div>
+	</div>
+</div>
